@@ -2,15 +2,24 @@
   "name": "peg-bruteforce",
   "version": "1.0.0",
   "description": "",
-  "main": "brute-ruim.js",
+  "main": "brute.js",
   "dependencies": {
+    "prompt-sync": "^4.2.0",
     "readline-sync": "^1.4.10"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RafaelKuhn/brute-force-peg-solitaire.git"
+  },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RafaelKuhn/brute-force-peg-solitaire/issues"
+  },
+  "homepage": "https://github.com/RafaelKuhn/brute-force-peg-solitaire#readme"
 }

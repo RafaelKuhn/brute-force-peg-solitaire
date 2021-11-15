@@ -1,142 +1,111 @@
-const readline = require('readline-sync');
+const prompt = require("prompt-sync")();
 
-// const inputX = console.log(readline.question("insira X (coordenada horizontal)"));
-// const inputX = console.log(readline.question("insira Y"));
-
-// trocar 0 para 2 e 2 para 0
-//
 // quantidade de jogadas até chega lá
 // caminho das jogadas
 // quantidade de tentativas
-//
-// ver como pôr input
-// checar se o output condiz com o input
 
 const board = [
-  [0, 0, 1, 1, 1, 0, 0,],
-  [0, 0, 1, 1, 1, 0, 0,],
+  [2, 2, 1, 1, 1, 2, 2,],
+  [2, 2, 1, 1, 1, 2, 2,],
   [1, 1, 1, 1, 1, 1, 1,],
-  [1, 1, 1, 2, 1, 1, 1,],
+  [1, 1, 1, 0, 1, 1, 1,],
   [1, 1, 1, 1, 1, 1, 1,],
-  [0, 0, 1, 1, 1, 0, 0,],
-  [0, 0, 1, 1, 1, 0, 0,],
+  [2, 2, 1, 1, 1, 2, 2,],
+  [2, 2, 1, 1, 1, 2, 2,],
 ];
 
-let tocos = 32;
+let qtdTocos = 32;
+
+const ultimoTocoPosition = {
+  i: Number,
+  j: Number
+}
 
 function restaUm() {
-  // process.stdout.write(`tocos: ${tocos} \n`);
 
   for (let y = 0; y < 7; y++) {
     for (let x = 0; x < 7; x++) {
-      // peça x, y sempre deverá ser 1
+
+      // o elemento atual (x, y) sempre deverá ser uma peça (valor 1)
       if (board[y][x] !== 1) continue;
 
       // dá pra jogar pra uma peça abaixo
-      if (y+2 <= 6) {
-      if (board[y+2][x] === 2 && board[y+1][x] === 1) {
-        // printBoard();
-        // console.log("jogarei pra baixo");
-        board[y][x] = 2;
-        board[y+1][x] = 2;
-        board[y+2][x] = 1;
-        tocos--;
-        // printBoard();
+      if (y + 2 <= 6) {
+        if (board[y + 2][x] === 0 && board[y + 1][x] === 1) {
+          board[y][x] = 0;
+          board[y + 1][x] = 0;
+          board[y + 2][x] = 1;
+          qtdTocos--;
 
-        checaTocos();
-        
-        // console.log("desfazendo bx");
-        board[y][x] = 1;
-        board[y+1][x] = 1;
-        board[y+2][x] = 2;
-        tocos++;
-        // printBoard();
-      }
+          checaOsTocos();
+
+          board[y][x] = 1;
+          board[y + 1][x] = 1;
+          board[y + 2][x] = 0;
+          qtdTocos++;
+        }
       }
 
 
       // dá pra jogar pra uma peça acima
-      if (y-2 >= 0) {
-      if (board[y-2][x] === 2 && board[y-1][x] === 1) {
-        // printBoard();
-        // console.log("jogarei pra cima");
-        board[y][x] = 2;
-        board[y-1][x] = 2;
-        board[y-2][x] = 1;
-        tocos--;
-        // printBoard();
+      if (y - 2 >= 0) {
+        if (board[y - 2][x] === 0 && board[y - 1][x] === 1) {
+          board[y][x] = 0;
+          board[y - 1][x] = 0;
+          board[y - 2][x] = 1;
+          qtdTocos--;
 
+          checaOsTocos();
 
-        checaTocos();
-
-        // console.log("desfazendo cima");
-        board[y][x] = 1;
-        board[y-1][x] = 1;
-        board[y-2][x] = 2;
-        tocos++;
-        // printBoard();
-      }
+          board[y][x] = 1;
+          board[y - 1][x] = 1;
+          board[y - 2][x] = 0;
+          qtdTocos++;
+        }
       }
 
 
       // dá pra jogar pra uma peça à direita
-      if (x+2 <= 6) {
-      if (board[y][x+2] === 2 && board[y][x+1] === 1) {
-        // printBoard();
-        // console.log("jogarei pra dir");
-        board[y][x] = 2;
-        board[y][x+1] = 2;
-        board[y][x+2] = 1;
-        tocos--;
-        // printBoard();
+      if (x + 2 <= 6) {
+        if (board[y][x + 2] === 0 && board[y][x + 1] === 1) {
+          board[y][x] = 0;
+          board[y][x + 1] = 0;
+          board[y][x + 2] = 1;
+          qtdTocos--;
 
+          checaOsTocos();
 
-        checaTocos();
-
-        // console.log("desfazendo dir");
-        board[y][x] = 1;
-        board[y][x+1] = 1;
-        board[y][x+2] = 2;
-        tocos++;
-        // printBoard();
-      }
+          board[y][x] = 1;
+          board[y][x + 1] = 1;
+          board[y][x + 2] = 0;
+          qtdTocos++;
+        }
       }
 
       // dá pra jogar pra uma peça à esquerda
-      if (x-2 >= 0) {
-      if (board[y][x-2] === 2 && board[y][x-1] === 1) {
-        // printBoard();
-        // console.log("jogarei pra esq");
-        board[y][x] = 2;
-        board[y][x-1] = 2;
-        board[y][x-2] = 1;
-        tocos--;
-        // printBoard();
+      if (x - 2 >= 0) {
+        if (board[y][x - 2] === 0 && board[y][x - 1] === 1) {
+          board[y][x] = 0;
+          board[y][x - 1] = 0;
+          board[y][x - 2] = 1;
+          qtdTocos--;
 
+          checaOsTocos();
 
-        checaTocos();
-
-        // console.log("desfazendo esq");
-        board[y][x] = 1;
-        board[y][x-1] = 1;
-        board[y][x-2] = 2;
-        tocos++;
-        // printBoard();
+          board[y][x] = 1;
+          board[y][x - 1] = 1;
+          board[y][x - 2] = 0;
+          qtdTocos++;
+        }
       }
-      }
-
-
-
     }
   }
 }
 
-function checaTocos() {
-  // checa tocos
+function checaOsTocos() {
   if (temAlgumaJogada()) {
     restaUm();
-  } else if (tocos === 1) {
-    // console.log("recurse");
+  } else if (qtdTocos === 1 && isLastTocoOnRightPosition()) {
     console.log("restou um");
     console.log("--------------------------------------------------------");
     printBoard();
@@ -148,49 +117,36 @@ function temAlgumaJogada() {
     for (let x = 0; x < 7; x++) {
 
       if (board[y][x] !== 1) continue;
-      
+
       // dá pra jogar pra baixo
-      if (y+2 <= 6)
-      // 2 pra baixo não tem peça, 1 pra baixo tem
-        if (board[y+2][x] === 2 && board[y+1][x] === 1) {
-          // console.log("tem jogada BX");
-          // printBoard();
+      if (y + 2 <= 6)
+        if (board[y + 2][x] === 0 && board[y + 1][x] === 1) {
           return true;
         }
-      
+
 
       // dá pra jogar pra cima
-      if (y-2 >= 0)
-      // 2 pra cima não tem peça, 1 pra cima tem
-        if (board[y-2][x] === 2 && board[y-1][x] === 1) {
-          // console.log("tem jogada CIM");
-          // printBoard();
+      if (y - 2 >= 0)
+        if (board[y - 2][x] === 0 && board[y - 1][x] === 1) {
           return true;
         }
-      
+
 
       // dá pra jogar pra direita
-      if (x+2 <= 6)
-      // 2 pra direita não tem peça, 1 pra direita tem
-        if (board[y][x+2] === 2 && board[y][x+1] === 1) {
-          // console.log("tem jogada DR");
-          // printBoard();
+      if (x + 2 <= 6)
+        if (board[y][x + 2] === 0 && board[y][x + 1] === 1) {
           return true;
         }
 
 
       // dá pra jogar pra esquerda
-      if (x-2 >= 0)
-      // 2 pra esquerda não tem peça, 1 pra esquerda tem
-        if (board[y][x-2] === 2 && board[y][x-1] === 1) {
-          // console.log("tem jogada ES");
-          // printBoard();
+      if (x - 2 >= 0)
+        if (board[y][x - 2] === 0 && board[y][x - 1] === 1) {
           return true;
         }
     }
   }
 
-  // console.log("não tem mais jogadas, voltando");
   return false;
 };
 
@@ -200,10 +156,8 @@ function printBoard() {
     s += `${y} `;
     for (let x = 0; x < 7; x++) {
       const el = board[y][x];
-      if (!el) {
+      if (el == 2) {
         s += '  ';
-      } else if (el === 2) {
-        s += `0 `;
       } else {
         s += `${el} `
       }
@@ -213,20 +167,74 @@ function printBoard() {
   console.log(s);
 }
 
-// function sleep(ms) {
-//   return new Promise((resolve) => {
-//     setTimeout(resolve, ms);
-//   });
-// }
+function getCoordinateFromInput(input) {
+  input.trim();
 
-console.log("-------------------------------------------");
-console.log("---------------- RESTA UM ----------------- ");
-console.log("-------------------------------------------");
-console.log("tabuleiro padrão: ");
-printBoard();
-console.log("0 - buracos");
-console.log("1 - peças\n");
+  let column = input.substr(0,1);
+  let row = input.substr(input.length-1, 1);
+  
+  column = parseInt(column);
+  row = parseInt(row);
 
-// console.log("insira coordenada do buraco");
+  let point = {
+    i: column,
+    j: row
+  }
+
+  const areNotNumbers = Number.isNaN(column) || Number.isNaN(row);
+   
+  if (areNotNumbers) {
+    const newInput = prompt("ERRO! Digite novamente a coordenada no formato i, j: ");
+    point = getCoordinateFromInput(newInput);
+  }
+  
+  const isOutOfBoard = ((point.i > 6 || point.j < 0) || (point.i > 6 || point.j < 0));
+  const isOnEmptyArea = board[point.i][point.j] === 2
+
+  if (isOutOfBoard || isOnEmptyArea) {
+    const newInput = prompt("ERRO! Digite novamente a coordenada no formato i, j: ");
+    point = getCoordinateFromInput(newInput);
+  }
+  
+  return point;
+}
+
+function applyInputToBoard(initialInput, finalInput) {
+  board[3][3] = 1;
+  board[initialInput.i][initialInput.j] = 0;
+
+  ultimoTocoPosition.i = finalInput.i;
+  ultimoTocoPosition.j = finalInput.j;
+}
+
+function isLastTocoOnRightPosition() {
+  return board[ultimoTocoPosition.i][ultimoTocoPosition.j] === 1;
+}
+
+function askForOptions() {
+  console.log("-------------------------------------------");
+  console.log("---------------- RESTA UM ----------------- ");
+  console.log("-------------------------------------------");
+  console.log("tabuleiro padrão: ");
+  printBoard();
+  console.log("0 - buracos");
+  console.log("1 - peças\n");
+
+  console.log("-------------------------------------------\n");
+  const buracoInicialInput = prompt("Digite as coordenadas do buraco inicial no formato -> i, j: ");
+  const buracoInicial = getCoordinateFromInput(buracoInicialInput);
+
+  const ultimoTocoInput = prompt("Digite as coordenadas do ultimo toco no formato -> i, j: ");
+  const ultimoToco = getCoordinateFromInput(ultimoTocoInput);
+
+  applyInputToBoard(buracoInicial, ultimoToco);
+
+  console.log("\n-------------------------------------------\n");
+  console.log("Novo tabuleiro: ");
+  printBoard();
+}
+
+
+askForOptions();
 
 restaUm();
