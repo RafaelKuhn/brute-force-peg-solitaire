@@ -16,7 +16,12 @@ const board = [
 
 let qtdTocos = 32;
 
-const ultimoTocoPosition = {
+let ultimoTocoMovido = {
+  i: Number,
+  j: Number
+};
+
+const posicaoDesejadaDoUltimoToco = {
   i: Number,
   j: Number
 }
@@ -36,6 +41,7 @@ function restaUm() {
           board[y + 1][x] = 0;
           board[y + 2][x] = 1;
           qtdTocos--;
+          ultimoTocoMovido.i = x; ultimoTocoMovido.j = y+2;
 
           checaOsTocos();
 
@@ -54,6 +60,7 @@ function restaUm() {
           board[y - 1][x] = 0;
           board[y - 2][x] = 1;
           qtdTocos--;
+          ultimoTocoMovido.i = x; ultimoTocoMovido.j = y-2;
 
           checaOsTocos();
 
@@ -72,6 +79,7 @@ function restaUm() {
           board[y][x + 1] = 0;
           board[y][x + 2] = 1;
           qtdTocos--;
+          ultimoTocoMovido.i = x+2; ultimoTocoMovido.j = y;
 
           checaOsTocos();
 
@@ -89,6 +97,7 @@ function restaUm() {
           board[y][x - 1] = 0;
           board[y][x - 2] = 1;
           qtdTocos--;
+          ultimoTocoMovido.i = x-2; ultimoTocoMovido.j = y;
 
           checaOsTocos();
 
@@ -104,13 +113,30 @@ function restaUm() {
 
 function checaOsTocos() {
   if (temAlgumaJogada()) {
+    
     restaUm();
-  } else if (qtdTocos === 1 && isLastTocoOnRightPosition()) {
-    console.log("restou um");
-    console.log("--------------------------------------------------------");
-    printBoard();
+
+  } else if (soTemUmToco()) {
+
+    if (tocoEstaNoLugarCerto()) {
+      console.log("-> restou um, tabuleiro: ");
+      printBoard();
+    } else {
+      const t = ultimoTocoMovido;
+      console.log(`-> ultimo toco encontrado em [${t.i}][${t.j}], diferente do lugar proposto`);
+    }
+
   }
 }
+
+function soTemUmToco() {
+  return qtdTocos == 1;
+}
+
+function tocoEstaNoLugarCerto() {
+  return board[posicaoDesejadaDoUltimoToco.j][posicaoDesejadaDoUltimoToco.i] === 1;
+}
+
 
 function temAlgumaJogada() {
   for (let y = 0; y < 7; y++) {
@@ -150,6 +176,9 @@ function temAlgumaJogada() {
   return false;
 };
 
+
+
+// abaixo boilerplate
 function printBoard() {
   let s = '  0 1 2 3 4 5 6\n';
   for (let y = 0; y < 7; y++) {
@@ -181,34 +210,33 @@ function getCoordinateFromInput(input) {
     j: row
   }
 
-  const areNotNumbers = Number.isNaN(column) || Number.isNaN(row);
+  const pedeInputDeNovo = () => {
+    const novoInput = prompt("ERRO! Digite novamente a coordenada no formato i, j: ");
+    point = getCoordinateFromInput(novoInput);
+  }
+
+  const naoSaoNumberos = Number.isNaN(column) || Number.isNaN(row);
    
-  if (areNotNumbers) {
-    const newInput = prompt("ERRO! Digite novamente a coordenada no formato i, j: ");
-    point = getCoordinateFromInput(newInput);
+  if (naoSaoNumberos) {
+    pedeInputDeNovo();
   }
   
-  const isOutOfBoard = ((point.i > 6 || point.j < 0) || (point.i > 6 || point.j < 0));
-  const isOnEmptyArea = board[point.i][point.j] === 2
+  const taForaDaBoard = ((point.i > 6 || point.j < 0) || (point.i > 6 || point.j < 0));
+  const taEmAreaVazia = board[point.i][point.j] === 2
 
-  if (isOutOfBoard || isOnEmptyArea) {
-    const newInput = prompt("ERRO! Digite novamente a coordenada no formato i, j: ");
-    point = getCoordinateFromInput(newInput);
+  if (taForaDaBoard || taEmAreaVazia) {
+    pedeInputDeNovo();
   }
   
   return point;
 }
 
-function applyInputToBoard(initialInput, finalInput) {
+function configuraTabuleiroComOInput(primeiroBuracoPos, ultimoTocoPos) {
   board[3][3] = 1;
-  board[initialInput.i][initialInput.j] = 0;
+  board[primeiroBuracoPos.i][primeiroBuracoPos.j] = 0;
 
-  ultimoTocoPosition.i = finalInput.i;
-  ultimoTocoPosition.j = finalInput.j;
-}
-
-function isLastTocoOnRightPosition() {
-  return board[ultimoTocoPosition.i][ultimoTocoPosition.j] === 1;
+  posicaoDesejadaDoUltimoToco.i = ultimoTocoPos.i;
+  posicaoDesejadaDoUltimoToco.j = ultimoTocoPos.j;
 }
 
 function askForOptions() {
@@ -227,11 +255,13 @@ function askForOptions() {
   const ultimoTocoInput = prompt("Digite as coordenadas do ultimo toco no formato -> i, j: ");
   const ultimoToco = getCoordinateFromInput(ultimoTocoInput);
 
-  applyInputToBoard(buracoInicial, ultimoToco);
+  configuraTabuleiroComOInput(buracoInicial, ultimoToco);
 
   console.log("\n-------------------------------------------\n");
   console.log("Novo tabuleiro: ");
   printBoard();
+
+  console.log("Executando força bruta");
 }
 
 
